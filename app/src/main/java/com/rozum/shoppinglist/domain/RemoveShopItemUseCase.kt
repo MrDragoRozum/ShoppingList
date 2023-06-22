@@ -1,6 +1,7 @@
 package com.rozum.shoppinglist.domain
 
-class RemoveShopItemUseCase {
+class RemoveShopItemUseCase(private val shopListRepository: ShopListRepository) {
     fun removeShopItem(shopItem: ShopItem) {
+        shopListRepository.removeShopItem(shopItem)
     }
 }
