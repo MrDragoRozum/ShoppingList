@@ -3,12 +3,21 @@ package com.rozum.shoppinglist.data
 import com.rozum.shoppinglist.domain.ShopItem
 import com.rozum.shoppinglist.domain.ShopListRepository
 
-object ShopListRepositoryImpl: ShopListRepository {
+object ShopListRepositoryImpl : ShopListRepository {
 
     private val shopList = mutableListOf<ShopItem>()
     private var autoIncrementId = 0
+
+    // init нужен для тестирования
+    init {
+        for(i in 0 until 10) {
+            val shopItem = ShopItem("item $i", i, true)
+            addShopItem(shopItem)
+        }
+    }
+
     override fun addShopItem(shopItem: ShopItem) {
-        if(shopItem.id == ShopItem.UNDEFINED_ID) {
+        if (shopItem.id == ShopItem.UNDEFINED_ID) {
             shopItem.id = autoIncrementId++
         }
         shopList.add(shopItem)
