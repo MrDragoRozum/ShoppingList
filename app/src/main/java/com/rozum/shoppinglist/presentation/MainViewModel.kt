@@ -1,4 +1,4 @@
-package com.rozum.shoppinglist.presention
+package com.rozum.shoppinglist.presentation
 
 import androidx.lifecycle.ViewModel
 import com.rozum.shoppinglist.data.ShopListRepositoryImpl
