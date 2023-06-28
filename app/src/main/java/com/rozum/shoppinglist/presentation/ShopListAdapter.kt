@@ -1,66 +1,52 @@
 package com.rozum.shoppinglist.presentation
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.rozum.shoppinglist.R
 import com.rozum.shoppinglist.domain.ShopItem
 
 class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>() {
 
+    companion object {
+        const val ITEM_SHOP_ENABLED = 100
+        const val ITEM_SHOP_DISABLED = 101
+        const val MAX_SIZE_POOL = 15
+    }
+
+    private var count = 0
+
     var listShopItem = listOf<ShopItem>()
         set(value) {
             field = value
             notifyDataSetChanged()
         }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemViewHolder {
+        Log.d("ShopListAdapter", "onCreateViewHolder count: ${++count}")
+        val layout =
+            if (viewType == ITEM_SHOP_ENABLED) R.layout.item_shop_enabled else R.layout.item_shop_disabled
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_shop_enabled, parent, false)
+            .inflate(layout, parent, false)
         return ShopItemViewHolder(view)
     }
 
+    override fun getItemViewType(position: Int) = if (listShopItem[position].enabled)
+        ITEM_SHOP_ENABLED else ITEM_SHOP_DISABLED
+
     override fun onBindViewHolder(holder: ShopItemViewHolder, position: Int) {
         val shopItem = listShopItem[position]
-        val status = if (shopItem.enabled) {
-            "Active"
-        } else {
-            "Not active"
-        }
-        holder.itemView.setOnLongClickListener {
-            true
-        }
-        if (shopItem.enabled) {
-            holder.textViewName.text = "${shopItem.name} $status"
-            holder.textViewCount.text = shopItem.score.toString()
-            holder.textViewName.setTextColor(
-                ContextCompat.getColor(
-                    holder.itemView.context,
-                    android.R.color.holo_red_light
-                )
-            )
-        }
+        holder.textViewName.text = shopItem.name
+        holder.textViewCount.text = shopItem.score.toString()
     }
 
-
-
-    override fun onViewRecycled(holder: ShopItemViewHolder) {
-        super.onViewRecycled(holder)
-        holder.textViewName.text = ""
-        holder.textViewCount.text = ""
-        holder.textViewName.setTextColor(
-            ContextCompat.getColor(
-                holder.itemView.context,
-                android.R.color.white
-            )
-        )
-    }
 
     override fun getItemCount() = listShopItem.size
     class ShopItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val textViewName = view.findViewById<TextView>(R.id.textViewName)
+        val textViewName: TextView = view.findViewById<TextView>(R.id.textViewName)
         val textViewCount = view.findViewById<TextView>(R.id.textViewCount)
     }
 }

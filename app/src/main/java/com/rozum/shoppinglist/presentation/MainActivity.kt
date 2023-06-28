@@ -1,14 +1,10 @@
 package com.rozum.shoppinglist.presentation
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.rozum.shoppinglist.R
-import com.rozum.shoppinglist.domain.ShopItem
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,6 +21,16 @@ class MainActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         val recyclerViewShopList = findViewById<RecyclerView>(R.id.recyclerViewShopList)
         shopListAdapter = ShopListAdapter()
-        recyclerViewShopList.adapter = shopListAdapter
+        with(recyclerViewShopList) {
+            adapter = shopListAdapter
+            recycledViewPool.setMaxRecycledViews(
+                ShopListAdapter.ITEM_SHOP_ENABLED,
+                ShopListAdapter.MAX_SIZE_POOL
+            )
+            recycledViewPool.setMaxRecycledViews(
+                ShopListAdapter.ITEM_SHOP_DISABLED,
+                ShopListAdapter.MAX_SIZE_POOL
+            )
+        }
     }
 }
