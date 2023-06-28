@@ -1,8 +1,11 @@
 package com.rozum.shoppinglist.presentation
 
+import android.media.MediaRouter.SimpleCallback
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.rozum.shoppinglist.R
 
@@ -16,6 +19,7 @@ class MainActivity : AppCompatActivity() {
         setupRecyclerView()
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.getShopList.observe(this) { shopListAdapter.listShopItem = it }
+
     }
 
     private fun setupRecyclerView() {
@@ -32,5 +36,36 @@ class MainActivity : AppCompatActivity() {
                 ShopListAdapter.MAX_SIZE_POOL
             )
         }
+        setupOnLongClickListener()
+        setupOnClickListener()
+        setupSwipeListener(recyclerViewShopList)
+    }
+
+    private fun setupSwipeListener(recyclerViewShopList: RecyclerView) {
+        val itemTouchHelper = ItemTouchHelper(object :
+            ItemTouchHelper.SimpleCallback(
+                0,
+                ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT
+            ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ) = false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val shopItem = shopListAdapter.listShopItem[viewHolder.adapterPosition]
+                viewModel.removeShopItem(shopItem)
+            }
+        })
+        itemTouchHelper.attachToRecyclerView(recyclerViewShopList)
+    }
+
+    private fun setupOnClickListener() {
+        shopListAdapter.onShopItemClick = { Log.d("MainActivity", "$it") }
+    }
+
+    private fun setupOnLongClickListener() {
+        shopListAdapter.onShopItemLongClick = { viewModel.changeEnabledStatus(it) }
     }
 }
