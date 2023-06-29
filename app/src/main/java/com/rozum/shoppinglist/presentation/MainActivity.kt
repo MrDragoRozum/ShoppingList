@@ -1,6 +1,5 @@
 package com.rozum.shoppinglist.presentation
 
-import android.media.MediaRouter.SimpleCallback
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity

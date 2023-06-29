@@ -28,7 +28,6 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemViewHolder {
-        Log.d("ShopListAdapter", "onCreateViewHolder count: ${++count}")
         val layout =
             if (viewType == ITEM_SHOP_ENABLED) R.layout.item_shop_enabled else R.layout.item_shop_disabled
         val view = LayoutInflater.from(parent.context)
@@ -40,6 +39,7 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
         ITEM_SHOP_ENABLED else ITEM_SHOP_DISABLED
 
     override fun onBindViewHolder(holder: ShopItemViewHolder, position: Int) {
+        Log.d("ShopListAdapter", "onBindViewHolder count: ${++count}")
         val shopItem = listShopItem[position]
         with(holder) {
             textViewName.text = shopItem.name
