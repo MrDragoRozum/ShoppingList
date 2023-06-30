@@ -1,5 +1,6 @@
 package com.rozum.shoppinglist.presentation
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -52,7 +53,9 @@ class ShopItemViewModel : ViewModel() {
 
     fun getShopItem(shopItemId: Int) {
         val item = getShopItemByIdUseCase.getShopItemById(shopItemId)
+        Log.d("ShopItemViewModel", "getShopItem: $item")
         _shopItem.value = item
+
     }
 
     fun resetErrorInputName() {
