@@ -90,7 +90,7 @@ class ShopItemFragment(
                 null
             }
         }
-        viewModel.shouldCloseScreen.observe(viewLifecycleOwner) { finish() }
+        viewModel.shouldCloseScreen.observe(viewLifecycleOwner) { activity?.onBackPressedDispatcher?.onBackPressed() }
     }
 
     private fun launchEditMode() {
@@ -137,5 +137,8 @@ class ShopItemFragment(
         private const val MODE_EDIT = "mode_edit"
         private const val MODE_ADD = "mode_add"
         private const val UNDEFINED_MODE = ""
+
+        fun newInstanceAddItem() = ShopItemFragment(MODE_ADD)
+        fun newInstanceEditItem(shopItemId: Int) = ShopItemFragment(MODE_EDIT, shopItemId)
     }
 }
