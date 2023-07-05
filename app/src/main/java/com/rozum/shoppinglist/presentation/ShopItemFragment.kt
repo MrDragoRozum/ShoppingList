@@ -14,10 +14,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.rozum.shoppinglist.R
 import com.rozum.shoppinglist.domain.ShopItem
 
-class ShopItemFragment(
-    private val screenMode: String = UNDEFINED_MODE,
-    private val shopItemId: Int = ShopItem.UNDEFINED_ID
-) : Fragment() {
+class ShopItemFragment : Fragment() {
 
     private lateinit var textInputLayoutName: TextInputLayout
     private lateinit var textInputEditTextName: EditText
@@ -26,6 +23,15 @@ class ShopItemFragment(
     private lateinit var buttonSave: Button
 
     private lateinit var viewModel: ShopItemViewModel
+
+    private var screenMode: String = UNDEFINED_MODE
+    private var shopItemId: Int = ShopItem.UNDEFINED_ID
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        parseParams()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,7 +43,6 @@ class ShopItemFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        parseParams()
         initViews(view)
         viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
         launchRightMode()
@@ -115,11 +120,20 @@ class ShopItemFragment(
     }
 
     private fun parseParams() {
-        if (screenMode != MODE_EDIT && screenMode != MODE_ADD) {
-            throw RuntimeException("Неизвестный mode: $screenMode")
+        val args = requireArguments()
+        if (!args.containsKey(SCREEN_MODE)) {
+            throw RuntimeException("SCREEN_MODE пустой")
         }
-        if (screenMode == MODE_EDIT && shopItemId == ShopItem.UNDEFINED_ID) {
-            throw RuntimeException("Пустой shopItemId")
+        val mode = args.getString(SCREEN_MODE)
+        if (mode != MODE_EDIT && mode != MODE_ADD) {
+            throw RuntimeException("Неизвестный mode: $mode")
+        }
+        screenMode = mode
+        if (screenMode == MODE_EDIT) {
+            if (!args.containsKey(SHOP_ITEM_ID)) {
+                throw RuntimeException("EXTRA_SHOP_ITEM_ID пустой")
+            }
+            shopItemId = args.getInt(SHOP_ITEM_ID, ShopItem.UNDEFINED_ID)
         }
     }
 
@@ -132,13 +146,22 @@ class ShopItemFragment(
     }
 
     companion object {
-        private const val EXTRA_SCREEN_MODE = "extra_mode"
-        private const val EXTRA_SHOP_ITEM_ID = "shop_item_id"
+        private const val SCREEN_MODE = "extra_mode"
+        private const val SHOP_ITEM_ID = "shop_item_id"
         private const val MODE_EDIT = "mode_edit"
         private const val MODE_ADD = "mode_add"
         private const val UNDEFINED_MODE = ""
 
-        fun newInstanceAddItem() = ShopItemFragment(MODE_ADD)
-        fun newInstanceEditItem(shopItemId: Int) = ShopItemFragment(MODE_EDIT, shopItemId)
+        fun newInstanceAddItem() = ShopItemFragment().apply {
+            arguments = Bundle().apply {
+                putString(SCREEN_MODE, MODE_ADD)
+            }
+        }
+        fun newInstanceEditItem(shopItemId: Int) = ShopItemFragment().apply {
+            arguments = Bundle().apply {
+                putString(SCREEN_MODE, MODE_EDIT)
+                putInt(SHOP_ITEM_ID, shopItemId)
+            }
+        }
     }
 }
