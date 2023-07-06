@@ -3,6 +3,7 @@ package com.rozum.shoppinglist.presentation
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +31,7 @@ class ShopItemFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseParams()
+        Log.d("ShopItemFragment", "onCreate: ")
     }
 
     override fun onCreateView(
@@ -51,7 +53,7 @@ class ShopItemFragment : Fragment() {
     }
 
 
-        private fun launchRightMode() {
+    private fun launchRightMode() {
         when (screenMode) {
             MODE_EDIT -> launchEditMode()
             MODE_ADD -> launchAddMode()
@@ -95,7 +97,9 @@ class ShopItemFragment : Fragment() {
                 null
             }
         }
-        viewModel.shouldCloseScreen.observe(viewLifecycleOwner) { activity?.onBackPressedDispatcher?.onBackPressed() }
+        viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
+            activity?.onBackPressedDispatcher?.onBackPressed()
+        }
     }
 
     private fun launchEditMode() {
@@ -157,6 +161,7 @@ class ShopItemFragment : Fragment() {
                 putString(SCREEN_MODE, MODE_ADD)
             }
         }
+
         fun newInstanceEditItem(shopItemId: Int) = ShopItemFragment().apply {
             arguments = Bundle().apply {
                 putString(SCREEN_MODE, MODE_EDIT)
