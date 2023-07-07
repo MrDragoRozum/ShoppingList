@@ -1,9 +1,9 @@
 package com.rozum.shoppinglist.presentation
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,13 +25,23 @@ class ShopItemFragment : Fragment() {
 
     private lateinit var viewModel: ShopItemViewModel
 
+    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
+
     private var screenMode: String = UNDEFINED_MODE
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if(context is OnEditingFinishedListener) {
+            onEditingFinishedListener = context
+        } else {
+            throw RuntimeException("Вы должны реализовать интерфейс OnEditingFinishedListener!")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseParams()
-        Log.d("ShopItemFragment", "onCreate: ")
     }
 
     override fun onCreateView(
@@ -98,7 +108,7 @@ class ShopItemFragment : Fragment() {
             }
         }
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            activity?.onBackPressedDispatcher?.onBackPressed()
+            onEditingFinishedListener.onEditingFinished()
         }
     }
 
@@ -147,6 +157,10 @@ class ShopItemFragment : Fragment() {
         textInputLayoutCount = view.findViewById(R.id.textInputLayoutCount)
         textInputEditTextCount = view.findViewById(R.id.textInputEditTextCount)
         buttonSave = view.findViewById(R.id.buttonSave)
+    }
+
+    interface OnEditingFinishedListener {
+        fun onEditingFinished()
     }
 
     companion object {

@@ -1,6 +1,7 @@
 package com.rozum.shoppinglist.presentation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
@@ -9,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.rozum.shoppinglist.R
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
@@ -97,4 +98,8 @@ class MainActivity : AppCompatActivity() {
         shopListAdapter.onShopItemLongClick = { viewModel.changeEnabledStatus(it) }
     }
 
+    override fun onEditingFinished() {
+        Toast.makeText(this, R.string.success, Toast.LENGTH_SHORT).show()
+        onBackPressedDispatcher.onBackPressed()
+    }
 }

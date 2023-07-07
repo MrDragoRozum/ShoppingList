@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.rozum.shoppinglist.R
 import com.rozum.shoppinglist.domain.ShopItem
 
-class ShopItemActivity : AppCompatActivity() {
+class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private var screenMode = UNDEFINED_MODE
     private var shopItemId = ShopItem.UNDEFINED_ID
@@ -65,5 +65,9 @@ class ShopItemActivity : AppCompatActivity() {
             intent.putExtra(EXTRA_SHOP_ITEM_ID, shopItemId)
             return intent
         }
+    }
+
+    override fun onEditingFinished() {
+        finish()
     }
 }

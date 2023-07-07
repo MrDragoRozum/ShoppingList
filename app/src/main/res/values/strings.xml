@@ -6,4 +6,5 @@
     <string name="button_save">Сохранить</string>
     <string name="error_count">Недопустимое количество</string>
     <string name="error_name">Недопустимое имя</string>
+    <string name="success">Сделано</string>
 </resources>
