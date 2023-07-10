@@ -6,6 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rozum.shoppinglist.R
 
 class ShopItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-    val textViewName: TextView = view.findViewById<TextView>(R.id.textViewName)
-    val textViewCount: TextView = view.findViewById<TextView>(R.id.textViewCount)
+    val textViewName: TextView = view.findViewById(R.id.textViewName)
+    val textViewCount: TextView = view.findViewById(R.id.textViewCount)
 }
