@@ -1,11 +1,6 @@
 package com.rozum.shoppinglist.presentation
 
-import android.view.View
-import android.widget.TextView
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import com.rozum.shoppinglist.R
 
-class ShopItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-    val textViewName: TextView = view.findViewById(R.id.textViewName)
-    val textViewCount: TextView = view.findViewById(R.id.textViewCount)
-}
+class ShopItemViewHolder(val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root)
