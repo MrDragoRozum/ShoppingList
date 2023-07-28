@@ -2,28 +2,19 @@ package com.rozum.shoppinglist.presentation
 
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.textfield.TextInputLayout
-import com.rozum.shoppinglist.R
+import com.rozum.shoppinglist.databinding.FragmentShopItemBinding
 import com.rozum.shoppinglist.domain.ShopItem
 
 class ShopItemFragment : Fragment() {
 
-    private lateinit var textInputLayoutName: TextInputLayout
-    private lateinit var textInputEditTextName: EditText
-    private lateinit var textInputLayoutCount: TextInputLayout
-    private lateinit var textInputEditTextCount: EditText
-    private lateinit var buttonSave: Button
-
     private lateinit var viewModel: ShopItemViewModel
+    private var _binding: FragmentShopItemBinding? = null
+    private val binding get() = _binding ?: throw RuntimeException("FragmentGameBinding == null")
 
     private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
@@ -32,7 +23,7 @@ class ShopItemFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if(context is OnEditingFinishedListener) {
+        if (context is OnEditingFinishedListener) {
             onEditingFinishedListener = context
         } else {
             throw RuntimeException("Вы должны реализовать интерфейс OnEditingFinishedListener!")
@@ -48,18 +39,20 @@ class ShopItemFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_shop_item, container, false)
+    ): View {
+        _binding = FragmentShopItemBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews(view)
         viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         launchRightMode()
         viewModelObserves()
-        listener()
+
     }
 
 
@@ -70,43 +63,7 @@ class ShopItemFragment : Fragment() {
         }
     }
 
-    private fun listener() {
-        textInputEditTextName.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.resetErrorInputName()
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        textInputEditTextCount.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.resetErrorInputCount()
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-    }
-
     private fun viewModelObserves() {
-        viewModel.errorInputCount.observe(viewLifecycleOwner) {
-            textInputLayoutCount.error = if (it) {
-                getString(R.string.error_count)
-            } else {
-                null
-            }
-        }
-        viewModel.errorInputName.observe(viewLifecycleOwner) {
-            textInputLayoutName.error = if (it) {
-                getString(R.string.error_name)
-            } else {
-                null
-            }
-        }
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
             onEditingFinishedListener.onEditingFinished()
         }
@@ -114,22 +71,22 @@ class ShopItemFragment : Fragment() {
 
     private fun launchEditMode() {
         viewModel.getShopItem(shopItemId)
-        viewModel.shopItem.observe(viewLifecycleOwner) {
-            textInputEditTextName.setText(it.name)
-            textInputEditTextCount.setText(it.score.toString())
-        }
-        buttonSave.setOnClickListener {
-            val name = textInputEditTextName.text.toString()
-            val count = textInputEditTextCount.text.toString()
-            viewModel.editShopItem(name, count)
+        with(binding) {
+            buttonSave.setOnClickListener {
+                val name = textInputEditTextName.text.toString()
+                val count = textInputEditTextCount.text.toString()
+                viewModel?.editShopItem(name, count)
+            }
         }
     }
 
     private fun launchAddMode() {
-        buttonSave.setOnClickListener {
-            val name = textInputEditTextName.text.toString()
-            val count = textInputEditTextCount.text.toString()
-            viewModel.addShopItem(name, count)
+        with(binding) {
+            buttonSave.setOnClickListener {
+                val name = textInputEditTextName.text.toString()
+                val count = textInputEditTextCount.text.toString()
+                viewModel?.addShopItem(name, count)
+            }
         }
     }
 
@@ -151,16 +108,13 @@ class ShopItemFragment : Fragment() {
         }
     }
 
-    private fun initViews(view: View) {
-        textInputLayoutName = view.findViewById(R.id.textInputLayoutName)
-        textInputEditTextName = view.findViewById(R.id.textInputEditTextName)
-        textInputLayoutCount = view.findViewById(R.id.textInputLayoutCount)
-        textInputEditTextCount = view.findViewById(R.id.textInputEditTextCount)
-        buttonSave = view.findViewById(R.id.buttonSave)
-    }
-
     interface OnEditingFinishedListener {
         fun onEditingFinished()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     companion object {

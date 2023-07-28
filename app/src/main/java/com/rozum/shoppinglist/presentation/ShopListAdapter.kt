@@ -45,12 +45,12 @@ class ShopListAdapter : ListAdapter<ShopItem, ShopItemViewHolder>(ShopItemDiffCa
             root.setOnClickListener { onShopItemClick?.invoke(shopItem) }
             when(this) {
                 is ItemShopDisabledBinding -> {
-                    textViewName.text = shopItem.name
-                    textViewCount.text = shopItem.score.toString()
+//                    textViewName.text = shopItem.name
+//                    textViewCount.text = shopItem.score.toString()
+                    this.shopItem = shopItem
                 }
                 is ItemShopEnabledBinding -> {
-                    textViewName.text = shopItem.name
-                    textViewCount.text = shopItem.score.toString()
+                    this.shopItem = shopItem
                 }
             }
         }
