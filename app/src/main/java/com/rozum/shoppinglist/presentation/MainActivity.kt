@@ -3,28 +3,26 @@ package com.rozum.shoppinglist.presentation
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.rozum.shoppinglist.R
+import com.rozum.shoppinglist.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
-    private var containerShopItem: FragmentContainerView? = null
+    private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        containerShopItem = findViewById(R.id.containerShopItem)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setupRecyclerView()
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.getShopList.observe(this) { shopListAdapter.submitList(it) }
 
-        val button = findViewById<FloatingActionButton>(R.id.buttonAddShopItem)
-        button.setOnClickListener {
+        binding.buttonAddShopItem.setOnClickListener {
             if (isOnePaneMode()) {
                 val intent = ShopItemActivity.newIntentAddItem(this)
                 startActivity(intent)
@@ -34,7 +32,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         }
     }
 
-    private fun isOnePaneMode() = containerShopItem == null
+    private fun isOnePaneMode() = binding.containerShopItem == null
 
     private fun launchFragment(fragment: ShopItemFragment) {
         supportFragmentManager.popBackStack()
@@ -45,10 +43,9 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     }
 
     private fun setupRecyclerView() {
-        val recyclerViewShopList = findViewById<RecyclerView>(R.id.recyclerViewShopList)
         shopListAdapter = ShopListAdapter()
-        with(recyclerViewShopList) {
-            adapter = shopListAdapter
+        binding.adapter = shopListAdapter
+        with(binding.recyclerViewShopList) {
             recycledViewPool.setMaxRecycledViews(
                 ShopListAdapter.ITEM_SHOP_ENABLED,
                 ShopListAdapter.MAX_SIZE_POOL
@@ -60,7 +57,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         }
         setupOnLongClickListener()
         setupOnClickListener()
-        setupSwipeListener(recyclerViewShopList)
+        setupSwipeListener(binding.recyclerViewShopList)
     }
 
     private fun setupSwipeListener(recyclerViewShopList: RecyclerView) {
