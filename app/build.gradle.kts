@@ -43,6 +43,13 @@ android {
 
 dependencies {
 
+    val room_version = "2.5.2"
+    implementation(libs.androidx.room.runtime)
+    kapt("androidx.room:room-compiler:$room_version")
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
+
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.material)
