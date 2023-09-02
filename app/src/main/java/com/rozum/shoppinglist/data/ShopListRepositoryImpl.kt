@@ -1,48 +1,32 @@
 package com.rozum.shoppinglist.data
 
-import androidx.lifecycle.MutableLiveData
+import android.app.Application
+import androidx.lifecycle.LiveData
 import com.rozum.shoppinglist.domain.ShopItem
 import com.rozum.shoppinglist.domain.ShopListRepository
-import kotlin.random.Random
 
-object ShopListRepositoryImpl : ShopListRepository {
+class ShopListRepositoryImpl(
+    application: Application
+) : ShopListRepository {
 
-    private val listLiveData = MutableLiveData<List<ShopItem>>()
-    private val shopList = sortedSetOf<ShopItem>({o1, o2 -> o1.id.compareTo(o2.id)})
-    private var autoIncrementId = 0
-
-    init {
-        for(i in 0 until 25) {
-            val shopItem = ShopItem("item $i", i, Random.nextBoolean())
-            addShopItem(shopItem)
-        }
-    }
+    private val shopItemDao = AppDatabase.getInstance(application).shopListDao()
+    private val mapper = ShopListMapper()
 
     override fun addShopItem(shopItem: ShopItem) {
-        if (shopItem.id == ShopItem.UNDEFINED_ID) {
-            shopItem.id = autoIncrementId++
-        }
-        shopList.add(shopItem)
-        updateList()
+        shopItemDao.addShopItem(mapper.mapEntityTopDbModel(shopItem))
     }
 
     override fun editShopItem(shopItem: ShopItem) {
-        val shopItemOld = getShopItemById(shopItem.id)
-        shopList.remove(shopItemOld)
-        addShopItem(shopItem)
+        shopItemDao.addShopItem(mapper.mapEntityTopDbModel(shopItem))
     }
 
     override fun getShopItemById(shopItemId: Int) =
-        shopList.find { shopItemId == it.id } ?: throw RuntimeException("ShopItem has null")
+        mapper.mapDbModelToEntity(shopItemDao.getShopItem(shopItemId))
 
-    override fun getShopList() = listLiveData
+    override fun getShopList(): LiveData<List<ShopItem>> =
+        mapper.mapListDbModelToListEntity(shopItemDao.getShopItemList())
 
     override fun removeShopItem(shopItem: ShopItem) {
-        shopList.remove(shopItem)
-        updateList()
-    }
-
-    private fun updateList() {
-        listLiveData.value = shopList.toList()
+        shopItemDao.removeShopItem(shopItem.id)
     }
 }
