@@ -2,6 +2,7 @@ package com.rozum.shoppinglist.data
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
 import com.rozum.shoppinglist.domain.ShopItem
 import com.rozum.shoppinglist.domain.ShopListRepository
 
@@ -24,7 +25,7 @@ class ShopListRepositoryImpl(
         mapper.mapDbModelToEntity(shopItemDao.getShopItem(shopItemId))
 
     override fun getShopList(): LiveData<List<ShopItem>> =
-        mapper.mapListDbModelToListEntity(shopItemDao.getShopItemList())
+        shopItemDao.getShopItemList().map { mapper.mapListDbModelToListEntity(it) }
 
     override fun removeShopItem(shopItem: ShopItem) {
         shopItemDao.removeShopItem(shopItem.id)
