@@ -1,9 +1,10 @@
 package com.rozum.shoppinglist.presentation
 
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.rozum.shoppinglist.data.ShopListRepositoryImpl
 import com.rozum.shoppinglist.domain.AddShopItemUseCase
 import com.rozum.shoppinglist.domain.EditShopItemUseCase
@@ -11,9 +12,9 @@ import com.rozum.shoppinglist.domain.GetShopItemByIdUseCase
 import com.rozum.shoppinglist.domain.ShopItem
 import com.rozum.shoppinglist.domain.ShopListRepository
 
-class ShopItemViewModel : ViewModel() {
+class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val shopListRepository: ShopListRepository = ShopListRepositoryImpl
+    private val shopListRepository: ShopListRepository = ShopListRepositoryImpl(application)
     private val editShopItemUseCase = EditShopItemUseCase(shopListRepository)
     private val addShopItemUseCase = AddShopItemUseCase(shopListRepository)
     private val getShopItemByIdUseCase = GetShopItemByIdUseCase(shopListRepository)
