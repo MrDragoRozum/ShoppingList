@@ -5,15 +5,13 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.rozum.shoppinglist.data.ShopListRepositoryImpl
 import com.rozum.shoppinglist.domain.AddShopItemUseCase
 import com.rozum.shoppinglist.domain.EditShopItemUseCase
 import com.rozum.shoppinglist.domain.GetShopItemByIdUseCase
 import com.rozum.shoppinglist.domain.ShopItem
 import com.rozum.shoppinglist.domain.ShopListRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
@@ -32,14 +30,12 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
     private val _shouldCloseScreen = MutableLiveData<Unit>()
     val shouldCloseScreen: LiveData<Unit> get() = _shouldCloseScreen
 
-    private val scope = CoroutineScope(Dispatchers.IO)
-
     fun addShopItem(inputName: String, inputCount: String?) {
         val name = parseName(inputName)
         val count = parseCount(inputCount)
         val fieldsValid = validateInput(name, count)
         if (fieldsValid) {
-            scope.launch {
+            viewModelScope.launch {
                 val item = ShopItem(name, count, true)
                 addShopItemUseCase.addShopItem(item)
                 finishWork()
@@ -53,7 +49,7 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
         val fieldsValid = validateInput(name, count)
         if (fieldsValid) {
             _shopItem.value?.let {
-                scope.launch {
+                viewModelScope.launch {
                     val shopItem = it.copy(name = name, score = count)
                     editShopItemUseCase.editShopItem(shopItem)
                     finishWork()
@@ -63,7 +59,7 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun getShopItem(shopItemId: Int) {
-        scope.launch {
+        viewModelScope.launch {
             val item = getShopItemByIdUseCase.getShopItemById(shopItemId)
             Log.d("ShopItemViewModel", "getShopItem: $item")
             _shopItem.value = item
@@ -95,10 +91,5 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
 
     private fun finishWork() {
         _shouldCloseScreen.value = Unit
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        scope.cancel()
     }
 }

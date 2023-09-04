@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
 
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.material)
