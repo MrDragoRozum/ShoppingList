@@ -1,8 +1,9 @@
 package com.rozum.shoppinglist.data
 
 import com.rozum.shoppinglist.domain.ShopItem
+import javax.inject.Inject
 
-class ShopListMapper {
+class ShopListMapper @Inject constructor() {
     fun mapEntityTopDbModel(shopItem: ShopItem) =
         ShopItemDbModel(shopItem.id, shopItem.name, shopItem.score, shopItem.enabled)
 
