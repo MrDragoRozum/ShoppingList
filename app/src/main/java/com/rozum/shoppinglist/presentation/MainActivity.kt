@@ -14,13 +14,14 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+    @Inject
+    lateinit var shopListAdapter: ShopListAdapter
 
     private val component by lazy {
         (application as AppShoppingList).component
     }
 
     private lateinit var viewModel: MainViewModel
-    private lateinit var shopListAdapter: ShopListAdapter
     private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
@@ -52,7 +53,6 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     }
 
     private fun setupRecyclerView() {
-        shopListAdapter = ShopListAdapter()
         binding.adapter = shopListAdapter
         with(binding.recyclerViewShopList) {
             recycledViewPool.setMaxRecycledViews(
