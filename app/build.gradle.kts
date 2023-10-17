@@ -1,4 +1,3 @@
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
@@ -7,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.rozum.shoppinglist"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.rozum.shoppinglist"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -42,6 +41,10 @@ android {
 }
 
 dependencies {
+
+
+    implementation(libs.dagger)
+    kapt(libs.dagger.compiler)
 
     val room_version = "2.5.2"
     implementation(libs.androidx.room.runtime)
