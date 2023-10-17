@@ -9,8 +9,9 @@ import com.rozum.shoppinglist.R
 import com.rozum.shoppinglist.databinding.ItemShopDisabledBinding
 import com.rozum.shoppinglist.databinding.ItemShopEnabledBinding
 import com.rozum.shoppinglist.domain.ShopItem
+import javax.inject.Inject
 
-class ShopListAdapter : ListAdapter<ShopItem, ShopItemViewHolder>(ShopItemDiffCallback()) {
+class ShopListAdapter @Inject constructor(): ListAdapter<ShopItem, ShopItemViewHolder>(ShopItemDiffCallback()) {
 
     companion object {
         const val ITEM_SHOP_ENABLED = 100

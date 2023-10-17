@@ -1,5 +1,7 @@
 package com.rozum.shoppinglist.domain
 
-class GetShopItemByIdUseCase(private val shopListRepository: ShopListRepository) {
+import javax.inject.Inject
+
+class GetShopItemByIdUseCase @Inject constructor(private val shopListRepository: ShopListRepository) {
     suspend fun getShopItemById(shopItemId: Int) = shopListRepository.getShopItemById(shopItemId)
 }

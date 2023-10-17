@@ -9,10 +9,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.rozum.shoppinglist.databinding.FragmentShopItemBinding
 import com.rozum.shoppinglist.domain.ShopItem
+import javax.inject.Inject
 
 class ShopItemFragment : Fragment() {
 
     private lateinit var viewModel: ShopItemViewModel
+
     private var _binding: FragmentShopItemBinding? = null
     private val binding get() = _binding ?: throw RuntimeException("FragmentGameBinding == null")
 
@@ -21,7 +23,15 @@ class ShopItemFragment : Fragment() {
     private var screenMode: String = UNDEFINED_MODE
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
 
+    private val component by lazy {
+        (requireActivity().application as AppShoppingList).component
+    }
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
     override fun onAttach(context: Context) {
+        component.inject(this)
         super.onAttach(context)
         if (context is OnEditingFinishedListener) {
             onEditingFinishedListener = context
@@ -47,7 +57,7 @@ class ShopItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[ShopItemViewModel::class.java]
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         launchRightMode()
