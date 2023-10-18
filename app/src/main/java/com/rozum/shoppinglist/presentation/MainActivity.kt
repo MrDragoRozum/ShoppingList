@@ -1,5 +1,6 @@
 package com.rozum.shoppinglist.presentation
 
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -40,6 +41,13 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
                 launchFragment(ShopItemFragment.newInstanceAddItem())
             }
         }
+        contentResolver.query(
+            Uri.parse("content://com.rozum.shoppinglist/shop_items"),
+            null,
+            null,
+            null,
+            null
+        )
     }
 
     private fun isOnePaneMode() = binding.containerShopItem == null
