@@ -86,9 +86,21 @@ class ShopItemFragment : Fragment() {
         viewModel.getShopItem(shopItemId)
         with(binding) {
             buttonSave.setOnClickListener {
-                val name = textInputEditTextName.text.toString()
-                val count = textInputEditTextCount.text.toString()
-                viewModel?.editShopItem(name, count)
+//                val name = textInputEditTextName.text.toString()
+//                val count = textInputEditTextCount.text.toString()
+//                viewModel?.editShopItem(name, count)
+                thread {
+                    requireContext().contentResolver.update(
+                        Uri.parse("content://com.rozum.shoppinglist/shop_items/"),
+                        ContentValues().apply {
+                            put("id", shopItemId)
+                            put("name", textInputEditTextName.text.toString())
+                            put("score", textInputEditTextCount.text.toString())
+                        },
+                        null,
+                        null
+                    )
+                }
             }
         }
     }
