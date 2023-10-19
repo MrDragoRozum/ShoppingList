@@ -24,6 +24,9 @@ interface ShopListDao {
     @Query("DELETE FROM SHOP_ITEMS WHERE id = :shopItemId")
     suspend fun removeShopItem(shopItemId: Int)
 
+    @Query("DELETE FROM SHOP_ITEMS WHERE id = :shopItemId")
+    fun removeShopItemSync(shopItemId: Int): Int
+
     @Query("SELECT * FROM SHOP_ITEMS WHERE id = :shopItemId LIMIT 1")
     suspend fun getShopItem(shopItemId: Int): ShopItemDbModel
 }
