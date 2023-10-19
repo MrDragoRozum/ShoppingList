@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             }
         }
         contentResolver.query(
-            Uri.parse("content://com.rozum.shoppinglist/shop_items"),
+            Uri.parse("content://com.rozum.shoppinglist/shop_items/s"),
             null,
             null,
             null,
