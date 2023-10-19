@@ -6,6 +6,7 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import android.util.Log
+import com.rozum.shoppinglist.domain.ShopItem
 import com.rozum.shoppinglist.presentation.AppShoppingList
 import javax.inject.Inject
 
@@ -17,6 +18,9 @@ class ShopListProvider : ContentProvider() {
 
     @Inject
     lateinit var shopListDao: ShopListDao
+
+    @Inject
+    lateinit var mapper: ShopListMapper
 
     override fun onCreate(): Boolean {
         component.inject(this)
@@ -55,7 +59,27 @@ class ShopListProvider : ContentProvider() {
     }
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
-        TODO("Not yet implemented")
+        when (uriMatcher.match(uri)) {
+            GET_SHOP_ITEMS_QUERY -> {
+                if (values == null) return null
+                val id = values.getAsInteger("id")
+                val name = values.getAsString("name")
+                val score = values.getAsInteger("score")
+                val enabled = values.getAsBoolean("enabled")
+
+                shopListDao.addShopItemSync(
+                    mapper.mapEntityTopDbModel(
+                        ShopItem(
+                            name,
+                            score,
+                            enabled,
+                            id
+                        )
+                    )
+                )
+            }
+        }
+        return null
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {

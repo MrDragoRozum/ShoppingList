@@ -1,6 +1,8 @@
 package com.rozum.shoppinglist.presentation
 
+import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.rozum.shoppinglist.databinding.FragmentShopItemBinding
 import com.rozum.shoppinglist.domain.ShopItem
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class ShopItemFragment : Fragment() {
 
@@ -93,9 +96,20 @@ class ShopItemFragment : Fragment() {
     private fun launchAddMode() {
         with(binding) {
             buttonSave.setOnClickListener {
-                val name = textInputEditTextName.text.toString()
-                val count = textInputEditTextCount.text.toString()
-                viewModel?.addShopItem(name, count)
+//                val name = textInputEditTextName.text.toString()
+//                val count = textInputEditTextCount.text.toString()
+//                viewModel?.addShopItem(name, count)
+                thread {
+                    requireContext().contentResolver.insert(
+                        Uri.parse("content://com.rozum.shoppinglist/shop_items"),
+                        ContentValues().apply {
+                            put("id", 0)
+                            put("name", textInputEditTextName.text.toString())
+                            put("score", textInputEditTextCount.text.toString())
+                            put("enabled", true)
+                        }
+                    )
+                }
             }
         }
     }
