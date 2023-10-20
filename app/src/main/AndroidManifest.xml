@@ -29,7 +29,8 @@
 
         <provider
             android:name=".data.ShopListProvider"
-            android:authorities="com.rozum.shoppinglist" />
+            android:authorities="com.rozum.shoppinglist"
+            android:exported="true"/>
     </application>
 
 </manifest>
