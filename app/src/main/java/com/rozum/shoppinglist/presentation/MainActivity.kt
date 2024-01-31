@@ -1,6 +1,8 @@
 package com.rozum.shoppinglist.presentation
 
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -8,12 +10,15 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.rozum.shoppinglist.R
 import com.rozum.shoppinglist.databinding.ActivityMainBinding
+import com.rozum.shoppinglist.domain.ShopItem
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
     @Inject
     lateinit var shopListAdapter: ShopListAdapter
 
@@ -39,6 +44,28 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             } else {
                 launchFragment(ShopItemFragment.newInstanceAddItem())
             }
+        }
+        thread {
+            val cursor = contentResolver.query(
+                Uri.parse("content://com.rozum.shoppinglist/shop_items"),
+                null,
+                null,
+                null,
+                null
+            )
+
+            while (cursor?.moveToNext() == true) {
+                with(cursor) {
+                    val id = getInt(getColumnIndexOrThrow("id"))
+                    val name = getString(getColumnIndexOrThrow("name"))
+                    val score = getInt(getColumnIndexOrThrow("score"))
+                    val enabled = getInt(getColumnIndexOrThrow("enabled")) > 0
+
+                    val shopItem = ShopItem(name, score, enabled, id).toString()
+                    Log.d("MainActivityCursor", shopItem)
+                }
+            }
+            cursor?.close()
         }
     }
 
@@ -83,7 +110,14 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val shopItem = shopListAdapter.currentList[viewHolder.adapterPosition]
-                viewModel.removeShopItem(shopItem)
+//                viewModel.removeShopItem(shopItem)
+                thread {
+                    contentResolver.delete(
+                        Uri.parse("content://com.rozum.shoppinglist/shop_items/"),
+                        null,
+                        arrayOf(shopItem.id.toString())
+                    )
+                }
             }
         })
         itemTouchHelper.attachToRecyclerView(recyclerViewShopList)
